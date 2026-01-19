@@ -1,35 +1,59 @@
-import React, { use } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
+import React from 'react';
+import { StyleSheet, View, Text } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  Easing,
+  withRepeat,
+} from 'react-native-reanimated';
 
-import Animated from 'react-native-reanimated';
-import { useSharedValue , withSpring, useAnimatedStyle, useAnimatedProps, withTiming} from 'react-native-reanimated';
-import { Svg, Circle } from 'react-native-svg';
-
-const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+    const duration = 2000;   
+    
+    interface AppProps {
+        width: number;
+    }
 
 const Home = () => {
-    const r = useSharedValue<number>(20);
 
-    const handlePress = () => {
-        r.value += 7;
-    }
-    const animatedProps = useAnimatedProps(() => ({
-        r: withTiming(r.value)
-    }));
+
+    const defaultAnim = useSharedValue<number>(width / 2 - 160);
+    const linear = useSharedValue<number>(width / 2 - 160);
+
+  const animatedDefault = useAnimatedStyle(() => ({
+    transform: [{ translateX: defaultAnim.value }],
+  }));
+  const animatedChanged = useAnimatedStyle(() => ({
+    transform: [{ translateX: linear.value }],
+  }));
+
+  React.useEffect(() => {
+    linear.value = withRepeat(
+      withTiming(-linear.value, {
+        duration,
+        easing: Easing.linear,
+      }),
+      -1,
+      true
+    );
+    defaultAnim.value = withRepeat(
+      withTiming(-defaultAnim.value, {
+        duration,
+      }),
+      -1,
+      true
+    );
+  }, []);
 
     return(
-        <View style = {styles.container}>
-            <Svg style={styles.circle}>
-                <AnimatedCircle 
-                    cx={'50%'} 
-                    cy={'50%'} 
-                    r={r.value}
-                    animatedProps={animatedProps} 
-                    fill="#277587ff" 
-                />
-            </Svg>
-            <Button onPress={handlePress} title="Click me" />
-        </View>
+    <View style={styles.container}>
+        <Animated.View style={[styles.box, animatedDefault]}>
+            <Text style={styles.text}>inout</Text>
+        </Animated.View>
+        <Animated.View style={[styles.box, animatedChanged]}>
+            <Text style={styles.text}>linear</Text>
+        </Animated.View>
+    </View>
     )
 };
 
@@ -38,18 +62,23 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#fff',                
+        height: '100%',
     },
     box: {
-        width: 120,
-        height: 120,
-        backgroundColor: '#277587ff',
-        borderRadius: 10,
+        height: 80,
+        width: 80,
+        margin: 20,
+        borderWidth: 1,
+        borderColor: '#b58df1',
+        borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-    circle: {
-        height: '50%',
-        width: '100%'
-    }
+    text: {
+        color: '#b58df1',
+        textTransform: 'uppercase',
+        fontWeight: 'bold',
+    },
 
 })
 

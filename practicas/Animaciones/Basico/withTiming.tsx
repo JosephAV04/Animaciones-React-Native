@@ -14,8 +14,8 @@ export default function App() {
 
   const { width } = useWindowDimensions();
 
+  const initialOffset = width / 2 - 160;
 
-  const initialOffset = width / 2 - 50;
 
   const defaultAnim = useSharedValue<number>(initialOffset);
   const linear = useSharedValue<number>(initialOffset);
@@ -27,13 +27,14 @@ export default function App() {
     transform: [{ translateX: linear.value }],
   }));
 
+.
   React.useEffect(() => {
     linear.value = withRepeat(
       withTiming(-linear.value, {
         duration,
         easing: Easing.linear,
       }),
-      -1,
+      -1, 
       true 
     );
     defaultAnim.value = withRepeat(
@@ -43,7 +44,7 @@ export default function App() {
       -1,
       true
     );
-  }, [linear, defaultAnim]); 
+  }, [linear, defaultAnim]);
 
   return (
     <View style={styles.container}>
@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: '100%',
-    backgroundColor: '#fff',
+    backgroundColor: '#fff', 
   },
   box: {
     height: 80,
